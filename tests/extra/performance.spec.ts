@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
 test("page loads under 5 seconds", async ({ page }) => {
   const start = Date.now();
