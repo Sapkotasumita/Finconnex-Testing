@@ -8,3 +8,7 @@ node_modules/
 /playwright/.auth/
 /playwright-report/
 /test-results/
+/.env
+.env
+storageState.json
+/storageState.json

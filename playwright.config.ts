@@ -78,26 +78,75 @@
 //   // },
 // });
 
+// import { defineConfig } from "@playwright/test";
+// import dotenv from "dotenv";
+
+// export default defineConfig({
+//   testDir: "./tests",
+//   timeout: 30000,
+//   reporter: [
+//     ["html", { open: "never" }], // generate dashboard
+//     ["list"], // console output
+//   ],
+
+//   use: {
+//     baseURL: "https://finconnex.vercel.app",
+//     headless: true,
+//     viewport: { width: 1280, height: 720 },
+//   },
+
+//   projects: [
+//     {
+//       name: "chromium",
+//       use: { browserName: "chromium" },
+//     },
+//   ],
+// });
+// dotenv.config();
+
 import { defineConfig } from "@playwright/test";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export default defineConfig({
   testDir: "./tests",
+
   timeout: 30000,
-  reporter: [
-    ["html", { open: "never" }], // generate dashboard
-    ["list"], // console output
-  ],
+
+  retries: 2,
+  workers: 3,
+
+  reporter: [["html", { open: "never" }], ["list"]],
 
   use: {
-    baseURL: "https://finconnex.vercel.app",
     headless: true,
     viewport: { width: 1280, height: 720 },
+
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
+    video: "retain-on-failure",
   },
 
   projects: [
+    //  MARKETING WEBSITE (NO LOGIN)
     {
-      name: "chromium",
-      use: { browserName: "chromium" },
+      name: "marketing-site",
+      use: {
+        baseURL: "https://finconnex.vercel.app",
+      },
+    },
+
+    // DASHBOARD (WITH LOGIN SESSION)
+    {
+      name: "dashboard",
+      use: {
+        baseURL: "https://people.finconnex.com.au",
+        storageState: "storageState.json", // only dashboard uses auth
+      },
     },
   ],
+
+  //  only needed for dashboard login
+  globalSetup: require.resolve("./tests/auth/global.setup"),
 });
